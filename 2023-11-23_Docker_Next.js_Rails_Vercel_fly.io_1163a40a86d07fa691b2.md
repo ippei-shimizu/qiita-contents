@@ -7,6 +7,7 @@ private: true
 ## はじめに
 現在、事業会社でコーダーをしながらWeb開発の勉強をしています。  
 今回は、個人でWebアプリ開発を行う際にDockerを使用して、Rails（APIモード）/ Next.jsの環境構築を行い、デプロイ先にFly.ioとVercelを使用したいと考えたため、環境構築からデプロイまでの方法をまとめてみようと思います。  
+もし、この記事通りに環境構築・デプロイを行っている途中で発生したエラーや、記述のミスなどありましたらコメントいただけると幸いです。
 ## 使用技術
 - Ruby 3.2.2
 - Rails（APIモード） 7.0.8
@@ -16,6 +17,7 @@ private: true
 - Docker Compose v2.23.0
 - Fly.io
 - Vercel
+- Github Actions
 ## 全体の流れ
 今回は、Webアプリ開発を想定しているので、Githubでリポジトリを作成するところから解説をしていこうと思います。
 1. メインリポジトリ作成
@@ -27,7 +29,8 @@ private: true
 7. Next.jsでAPIを取得
 8. Vercelへデプロイ
 9. Fly.ioへデプロイ
-10. CORS設定
+10. Github Actions
+11. CORS設定
 ### ソースコード
 
 https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
