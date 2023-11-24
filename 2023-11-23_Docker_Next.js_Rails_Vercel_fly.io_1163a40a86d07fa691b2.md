@@ -74,16 +74,17 @@ rails-api-nextjs-verification-app $  git push -u origin main
 ```
 
 これで、リポジトリと連携ができたかと思います。
-- `front`ディレクトと`back`ディレクトリ用のリポジトリを作成します。
+- `front`ディレクトと`back`ディレクトリ用のリポジトリを作成します。リポジトリ作成時に、`Add a README file
+`にチェックを入れておき、リポジトリ作成時にコミットがされている状態にしておきます。
 - `rails-api-nextjs-verification-app`ディレクトリ内に、`front`と`back`のサブモジュールを追加します。
 
 
 ```
-rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのURL] front  
-rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのURL] back  
+rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのSSH] front  
+rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのSSH] back  
 ```
 
-- `.gitmodules`を作成します。
+- ルートディレクトリに`.gitmodules`が作成されているかと思います。もし、作成されてなかったら、以下のコマンドで作成してください。
 
 
 ```
@@ -93,10 +94,10 @@ rails-api-nextjs-verification-app $ touch .gitmodules
 ```:.gitmodules
 [submodule "front"]  
 	path = front  
-	url = [フロントエンドリポジトリのURL]  
+	url = [フロントエンドリポジトリのSSH]  
 [submodule "back"]  
 	path = back  
-	url = [バックエンドリポジトリのURL]   
+	url = [バックエンドリポジトリのSSH]   
 ```
 
 - メインリポジトリ変更のcommitとpushを行います。
