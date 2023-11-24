@@ -281,7 +281,87 @@ rails-api-nextjs-verification-app $ docker-compose build
 これで、`docker-compose build`が成功すれば、DockerにImageが作成されていると思います。  
 `docker images`を実行して、Imageが作成されているか確認してみてください。
 
-### 参考情報
+## フロントエンド側の環境構築（Next.js）
+次に、フロントエンド側で使用するNext.jsアプリケーションを作成していきます。  
+まずは、`front`ディレクトリへ移動してください。
+
+```
+$ cd front
+```
+
+続いて、`$ docker-compose run --rm front yarn create next-app .`を実行します。
+
+
+```
+front $ docker-compose run --rm front yarn create next-app .
+```
+
+すると、以下のエラーが発生するかと思います。  
+
+```
+[##] 2/2The directory app contains files that could conflict:
+
+  Dockerfile
+  README.md
+
+Either try using a new directory name, or remove the files listed above.
+
+error Command failed.
+Exit code: 1
+Command: /usr/local/bin/create-next-app
+Arguments: .
+Directory: /app
+Output:
+
+info Visit https://yarnpkg.com/en/docs/cli/create for documentation about this command.
+```
+
+このエラーは、`create-next-app`コマンドが新しいNext.jsアプリケーションをセットアップする際に、実行されたディレクトリが空でないということを表しています。  
+現在、frontディレクトリでは、`Dockerfile`と`README.me`が存在しているため、エラーが発生してしまいました。  
+
+なので、一度`Dockerfile`をルートディレクトリへ移動してから、再度`$ docker-compose run --rm front yarn create next-app .`を実行します。  
+`README.me`はNext.jsアプリ作成時に新規に作成されるので、ここでは削除してしまって大丈夫です。
+
+**一時的なディレクトリ構造**
+
+```
+├── rails-api-nextjs-verification-app
+    ├── front/
+    └── back/
+        ├── Dockerfile
+        ├── Gemfile
+        ├── Gemfile.lock
+        ├── README.mb
+    ├── docker-compose.yml 
+    ├── Dockerfile  // ここに移動
+```
+
+以下のようにNext.jsアプリ作成時の設定を色々聞かれると思いますが、今回はTypeScriptとESLintとTailwindCSSとAppRouterを使用したアプリケーションを作成します。
+
+[![Image from Gyazo](https://i.gyazo.com/682e74f322e19db459ffe4daaa3a19fa.png)](https://gyazo.com/682e74f322e19db459ffe4daaa3a19fa)
+
+作成が成功するとfrontディレクトが以下のようになります。
+
+[![Image from Gyazo](https://i.gyazo.com/1bd7dc28f0dd3ad0bfe77b2fca81a05f.png)](https://gyazo.com/1bd7dc28f0dd3ad0bfe77b2fca81a05f)
+
+そうしたら、先ほど一時的に移動した`Dockerfile`をfrontディレクトリ直下に戻します。
+
+`Dockerfile`を戻したら、frontディレクトリで`$ docker-compose up front`を実行して、Next.jsアプリケーションを起動します。  
+
+<details><summary>docker-compose up front について</summary>
+
+`docker-compose.yml`ファイル内に定義された`front`サービスに関連する、コンテナなどを作成します。  
+</details>
+
+そして、`http://localhost:8000/`にアクセスして、以下のようなNext.jsの初期画面が表示されたら成功です。
+
+[![Image from Gyazo](https://i.gyazo.com/d20ca07eb84effa5c60be0ee30100cab.png)](https://gyazo.com/d20ca07eb84effa5c60be0ee30100cab)
+
+
+
+
+
+## 参考情報
 
 https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
 
