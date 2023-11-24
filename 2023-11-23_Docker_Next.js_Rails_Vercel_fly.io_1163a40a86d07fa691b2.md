@@ -113,6 +113,164 @@ rails-api-nextjs-verification-app $ git push
 
 [![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
 
+## Docker設定
+次に、Dockerの設定として`docker-compose.yml`の作成と`front` `back`ディレクトリに`Dockerfile`を作成していきます。
+
+**ディレクト構成**
+
+```
+├── rails-api-nextjs-verification-app
+    ├── front/
+        ├── Dockerfile
+    └── back/
+        ├── Dockerfile
+    ├── docker-compose.yml 
+```
+
+
+**docker-compose.yml**
+
+```:docker-compose.yml
+version: "3"
+services:
+  db:
+    image: postgres:15.5
+    environment:
+      POSTGRES_DB: app_development
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
+    volumes:
+      - ./back:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+    environment:
+      - RAILS_ENV=development
+  front:
+    build:
+      context: ./front/
+      dockerfile: Dockerfile
+    volumes:
+      - ./front:/app
+    command: yarn dev -p 4000
+    ports:
+      - "8000:4000"
+volumes:
+  postgres_data:
+```
+
+<details><summary>docker-compose.ymlの各項目について</summary>
+
+- db
+  - postgres:15.5を使用しています。
+  - environmentで環境変数を設定しています。
+  - portsでポートマッピングを行っています。
+  - volumesでデータの永続化を設定しています。
+    - 通常、Dockerのコンテナ内のデータはコンテナが停止・削除されると消失します。しかし、データベースのデータは永続的に保存する必要があります。
+- back
+  - build → Dockerイメージのビルド方法を定義しています。
+    - context → Dockerfileがあるディレクトリパスを指定してます。
+    - dockerfile → Dockerfileの名前を指定します。
+  - command → コンテナが起動するときに実行されるコマンドを指定します。
+    - bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'" → まず、tmp/pids/server.pidを削除して、Railsサーバーを起動しています。
+  - volumes → コンテナ内のデータをホストマシンと共有するために使用されます。
+  - depends_on → backが他のサービスに依存していることを指定します。
+- front
+  - command
+    - yarn dev -p 4000 → コンテナ起動時に、ポート4000でフロントの開発サーバーを起動します。
+</details>
+
+**/front/Dockerfile**
+
+`front`ディレクトリに`Dockerfile`を作成します。  
+`Dockerfile`はイメージの設計図として機能します。必要な依存関係のインストールや、アプリケーションのコードのコピーなど、イメージを構築するために必要な情報を記載しています。
+
+```:/front/Dockerfile
+FROM node:19.4.0
+WORKDIR /app
+```
+
+**/back/Dockerfile**
+
+`back`ディレクトリに`Dockerfile`と`entrypoint.sh`を作成します。  
+`entrypoint.sh`は、コンテナが開始された時に実行されるスクリプトになります。
+
+```:/back/Dockerfile
+FROM ruby:3.2.2
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+
+WORKDIR /app
+
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
+
+RUN gem install bundler
+RUN bundle install
+
+COPY . /app
+
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+
+EXPOSE 3002
+
+CMD ["rails", "server", "-b", "0.0.0.0"]
+```
+
+
+```:entrypoint.sh
+#!/bin/bash
+set -e
+
+rm -f /app/tmp/pids/server.pid
+
+exec "$@"
+```
+
+- #!/bin/bash → Bashスクリプトであることを宣言しています。
+- set -e → スクリプトが失敗したら、直ちに停止します。
+- rm -f /app/tmp/pids/server.pid → Railsが生成する`server.pid`ファイルが前回のプロセスで残っているとサーバーが起動しないので、それを防ぎます。
+
+続いて、`$ docker-compose build`を通すために、`back`ディレクトリに`Gemfile`と`Gemfile.lock`を作成します。  
+`Gemfile.lock`は空のままで大丈夫です。
+
+```:Gemfile
+source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+ruby "3.2.2"
+
+gem "rails", "~> 7.0.5"
+```
+
+**現在のディレクトリ構造**
+
+```
+├── rails-api-nextjs-verification-app
+    ├── front/
+        ├── Dockerfile
+        ├── README.mb
+    └── back/
+        ├── Dockerfile
+        ├── Gemfile
+        ├── Gemfile.lock
+        ├── README.mb
+    ├── docker-compose.yml 
+```
+
 
 ### 参考情報
 
