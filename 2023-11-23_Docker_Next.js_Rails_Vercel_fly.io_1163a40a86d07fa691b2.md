@@ -451,6 +451,89 @@ Run `bundle install --gemfile /app/Gemfile` to install missing gems.
 [![Image from Gyazo](https://i.gyazo.com/3ecb22d1dec2e9101897c20f3ca15754.png)](https://gyazo.com/3ecb22d1dec2e9101897c20f3ca15754)
 
 
+ここまでが、DockerでRailsAPIとNext.jsの環境構築が完了になります。  
+この後は、実際にRailsで簡単なAPIを作成してみて、Next.jsで非同期処理を行いたいと思います。  
+
+## API作成
+次に、Railsアプリケーションで`scaffold`を使用して、簡単なAPIを作成してみたいと思います。  
+また、Next.js側で作成したAPIと簡単なやり取りができるところまで実装してみます。  
+
+### scaffold追加
+`back`ディレクトリで、`docker-compose run --rm back bundle exec rails g scaffold post title:string`を実行します。
+
+```
+back $ docker-compose run --rm back bundle exec rails g scaffold post title:string
+```
+
+次に、`docker-compose run --rm back bundle exec rails db:migrate`を実行します。
+
+```
+back $ docker-compose run --rm back bundle exec rails db:migrate
+```
+
+次に、`seeds.rb`でテストデータを作成します。  
+
+```:db/seeds.rb
+Post.create!(
+  [
+    { title: '野球のルール基礎知識' },
+    { title: 'プロ野球選手のトレーニング方法' },
+    { title: '野球の歴史とは' },
+    { title: 'メジャーリーグと日本プロ野球の違い' },
+    { title: '野球用具の選び方' },
+    { title: '野球のポジション紹介' },
+    { title: '野球の戦術入門' },
+    { title: '子供向け野球教室の選び方' },
+    { title: '高校野球の魅力' },
+    { title: '野球観戦の楽しみ方' },
+    { title: '野球のスコアブックのつけ方' },
+    { title: '野球の審判の役割' },
+    { title: '野球におけるピッチングの技術' },
+    { title: 'バッティングの基本' },
+    { title: '野球の名言集' },
+    { title: '野球のトレーニング用品紹介' },
+    { title: '野球選手の食事管理' },
+    { title: '野球の怪我の予防と対処法' },
+    { title: '野球の上達法' },
+    { title: '野球の国際大会について' }
+  ]
+)
+```
+
+`back $ docker-compose run --rm back bundle exec rails db:seed`を実行して、テストデータを作成します。 
+この後に、`http://0.0.0.0:3000/posts`にアクセスすると、JSON形式で先ほど作成したテストデータが表示されているかと思います。  
+
+### rack-cors追加
+次に、`gem "rack-cors"`を追加して、CORSを管理する設定を行います。  
+CORSとは、セキュリティの観点から、ブラウザから異なるオリジン（ドメイン・プロトコル・ポート）からのスクリプトによるリソースの読み込みを制限するものです。  
+なので、RailsAPIをフロントからAPIリクエストを行った時に、Rails側でCORS設定を行っていないオリジンだった場合、エラーになってしまいます。  
+
+`Gemfile`に`gem "rack-cors"`がコメントアウトされていると思うので、コメントアウトして、`config/initializers/cors.rb`を以下のように変更します。 
+
+```:config/initializers/cors.rb
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins 'localhost:8000', '127.0.0.1:8000'
+
+    resource "*",
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+  end
+end
+```
+
+こうすることで、`localhost:8000`と`127.0.0.1:8000`からのAPIリクエストを許可することができます。  
+そしたら、`back`ディレクトリで`$ docker-compose run --rm back bundle install`を実行します。
+
+```
+back $ docker-compose run --rm back bundle install
+```
+
+そして、再ビルドします。
+
+```
+back $ docker-compose build back
+```
 
 ## 参考情報
 
