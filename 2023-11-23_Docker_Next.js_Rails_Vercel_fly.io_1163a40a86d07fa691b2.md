@@ -640,11 +640,13 @@ export default function Home() {
 次に、RailsAPIアプリケーションをFly.ioにデプロイします。  
 `back`ディレクトリで`fly launch`を実行します。  
 
-Fly.ioの無料枠についてのページはこちら  
-https://fly.io/docs/about/pricing/  
+Fly.ioの無料枠で使用できる内容はこちらです。  
 > Up to 3 shared-cpu-1x 256mb VMs
 > 3GB persistent volume storage (total)
 > 160GB outbound data transfer
+
+詳しくは公式ページをご確認ください。
+https://fly.io/docs/about/pricing/  
 
 
 ```
