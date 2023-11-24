@@ -91,7 +91,7 @@ rails-api-nextjs-verification-app $ git submodule add [バックエンドリポ�
 rails-api-nextjs-verification-app $ touch .gitmodules
 ```
 
-```:.gitmodules
+```git:.gitmodules
 [submodule "front"]  
 	path = front  
 	url = [フロントエンドリポジトリのSSH]  
@@ -130,7 +130,7 @@ rails-api-nextjs-verification-app $ git push
 
 ### docker-compose.yml
 
-```:docker-compose.yml
+```yml:docker-compose.yml
 version: "3"
 services:
   db:
@@ -197,7 +197,7 @@ volumes:
 `front`ディレクトリに`Dockerfile`を作成します。  
 `Dockerfile`はイメージの設計図として機能します。必要な依存関係のインストールや、アプリケーションのコードのコピーなど、イメージを構築するために必要な情報を記載しています。
 
-```:/front/Dockerfile
+```Dockerfile:/front/Dockerfile
 FROM node:19.4.0
 WORKDIR /app
 ```
@@ -207,7 +207,7 @@ WORKDIR /app
 `back`ディレクトリに`Dockerfile`と`entrypoint.sh`を作成します。  
 `entrypoint.sh`は、コンテナが開始された時に実行されるスクリプトになります。
 
-```:/back/Dockerfile
+```Dockerfile:/back/Dockerfile
 FROM ruby:3.2.2
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 
@@ -231,7 +231,7 @@ CMD ["rails", "server", "-b", "0.0.0.0"]
 ```
 
 
-```:entrypoint.sh
+```sh:entrypoint.sh
 #!/bin/bash
 set -e
 
@@ -247,7 +247,7 @@ exec "$@"
 続いて、`$ docker-compose build`を通すために、`back`ディレクトリに`Gemfile`と`Gemfile.lock`を作成します。  
 `Gemfile.lock`は空のままで大丈夫です。
 
-```:Gemfile
+```Gemfile:Gemfile
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -397,7 +397,7 @@ Railsアプリケーションの作成が完了すると、`back`ディレクト
 #### 国際化とタイムゾーンの設定
 `config/application.rb`に以下のコードを追加します。
 
-```:config/application.rb
+```rb:config/application.rb
 module App
   class Application < Rails::Application
 
@@ -413,7 +413,7 @@ end
 #### ホスト機能設定
 `config/environments/development.rb`に`config.hosts << "api"`を追加します。  
 
-```:config/environments/development.rb
+```rb:config/environments/development.rb
 Rails.application.configure do
 
   config.hosts << "api"
@@ -423,7 +423,7 @@ end
 #### データベースのセットアップ
 `/config/database.yml`に以下のコードを追加します。
 
-```:/config/database.yml
+```yml:/config/database.yml
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -473,7 +473,7 @@ back $ docker-compose run --rm back bundle exec rails db:migrate
 
 次に、`seeds.rb`でテストデータを作成します。  
 
-```:db/seeds.rb
+```rb:db/seeds.rb
 Post.create!(
   [
     { title: '野球のルール基礎知識' },
@@ -510,7 +510,7 @@ CORSとは、セキュリティの観点から、ブラウザから異なるオ�
 
 `Gemfile`に`gem "rack-cors"`がコメントアウトされていると思うので、コメントアウトして、`config/initializers/cors.rb`を以下のように変更します。 
 
-```:config/initializers/cors.rb
+```rb:config/initializers/cors.rb
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins 'localhost:8000', '127.0.0.1:8000'
@@ -542,7 +542,7 @@ back $ docker-compose build back
 <details><summary>page.tsx</summary>
 
 
-```:app/page.tsx
+```tsx:app/page.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 
