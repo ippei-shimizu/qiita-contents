@@ -247,7 +247,7 @@ exec "$@"
 続いて、`$ docker-compose build`を通すために、`back`ディレクトリに`Gemfile`と`Gemfile.lock`を作成します。  
 `Gemfile.lock`は空のままで大丈夫です。
 
-```Gemfile:Gemfile
+```rb:Gemfile
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
