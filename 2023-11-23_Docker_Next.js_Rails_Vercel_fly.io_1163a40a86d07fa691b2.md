@@ -93,12 +93,9 @@ rails-api-nextjs-verification-app $ git commit -m "Add: submolues"
 rails-api-nextjs-verification-app $ git push
 ```
 以下の画面のようになれば完了です。
-
+[![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
 
 
 ### 参考情報
 
-https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
-
-https://zenn.dev/taku1115/articles/6c9fa97ab37e38
 
