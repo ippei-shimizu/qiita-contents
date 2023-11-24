@@ -278,6 +278,9 @@ gem "rails", "~> 7.0.5"
 rails-api-nextjs-verification-app $ docker-compose build
 ```
 
+これで、`docker-compose build`が成功すれば、DockerにImageが作成されていると思います。  
+`docker images`を実行して、Imageが作成されているか確認してみてください。
+
 ### 参考情報
 
 https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
