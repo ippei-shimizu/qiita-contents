@@ -26,7 +26,7 @@ private: true
 3. フロントエンド側の環境構築（Next.js）
 4. バックエンド側の環境構築（Rails API）
 5. API作成
-6. Next.jsでAPIを取得
+6. Next.jsでAPIリクエスト
 7. Vercelへデプロイ
 8. Fly.ioへデプロイ
 9.  Github Actions
@@ -535,7 +535,7 @@ back $ docker-compose run --rm back bundle install
 back $ docker-compose build back
 ```
 
-### Next.jsの実装
+## Next.jsでAPIリクエスト
 次に、Next.js側で「記事のタイトルのみ投稿するフォーム」と「記事一覧を取得」する実装を行ってみたいと思います。  
 以下がTypeScriptを使用したコードになります。（不要なcssは削除しました）  
 
@@ -621,8 +621,20 @@ export default function Home() {
 
 [![Image from Gyazo](https://i.gyazo.com/dee2f5b7df19fbd29e5f12a702adb80b.png)](https://gyazo.com/dee2f5b7df19fbd29e5f12a702adb80b)
 
+## Vercelへデプロイ
+先ほど作成した、`front`ディレクトリのNext.jsアプリケーションをVercelへデプロイします。  
+すごく簡単にデプロイを行うことができます。
 
+1. https://vercel.com/dashboard にアクセスします。まだ、Vercelへ登録していない方は、登録をお願いします。
+2. 「Dashboard」の「Add New」の「Project」をクリックします。
+[![Image from Gyazo](https://i.gyazo.com/070ce1b92cbdd0156126b4edf5f0717b.png)](https://gyazo.com/070ce1b92cbdd0156126b4edf5f0717b)
+3. 「Import Git Repository」で、`front`ディレクトリと紐づいているリポジトリを選択（Import）します。
+[![Image from Gyazo](https://i.gyazo.com/3c98be8ffcf0a8fd24556e18b2a876bf.png)](https://gyazo.com/3c98be8ffcf0a8fd24556e18b2a876bf)
+4. 「Configure Project」の「Deploy」をクリックします。
+[![Image from Gyazo](https://i.gyazo.com/7687091b9a8e3f488547c3d9aa89dee1.png)](https://gyazo.com/7687091b9a8e3f488547c3d9aa89dee1)
+5. 「Congratulations!」という画面が表示されたら、デプロイ成功です。
 
+これで、`front`ディレクトリのリポジトリの`mainブランチ`にpushされたら、自動でデプロイが行われます。
 
 ## 参考情報
 
