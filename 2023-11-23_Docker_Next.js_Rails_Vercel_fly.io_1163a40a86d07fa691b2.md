@@ -93,7 +93,7 @@ rails-api-nextjs-verification-app $ git commit -m "Add: submolues"
 rails-api-nextjs-verification-app $ git push
 ```
 以下の画面のようになれば完了です。
-[![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
+
 
 
 ### 参考情報
