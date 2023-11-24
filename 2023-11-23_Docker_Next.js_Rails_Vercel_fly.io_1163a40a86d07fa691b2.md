@@ -56,7 +56,7 @@ https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 
 - 任意のディレクトリで、`$ mkdir [任意のディレクトリ名]`を実行します。今回は、`rails-api-nextjs-verification-app`で進めていきます。
 
-```
+```sh
 $ mkdir rails-api-nextjs-verification-app
 ```
 
@@ -64,7 +64,7 @@ $ mkdir rails-api-nextjs-verification-app
 - github上で、`rails-api-nextjs-verification-app`用のリポジトリを作成して、`git init`をします。  
 
 
-```
+```sh
 rails-api-nextjs-verification-app $ git init   
 rails-api-nextjs-verification-app $ git add README.mb  
 rails-api-nextjs-verification-app $ git commit -m "first commit"  
@@ -79,7 +79,7 @@ rails-api-nextjs-verification-app $  git push -u origin main
 - `rails-api-nextjs-verification-app`ディレクトリ内に、`front`と`back`のサブモジュールを追加します。
 
 
-```
+```sh
 rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのSSH] front  
 rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのSSH] back  
 ```
@@ -87,11 +87,11 @@ rails-api-nextjs-verification-app $ git submodule add [バックエンドリポ�
 - ルートディレクトリに`.gitmodules`が作成されているかと思います。もし、作成されてなかったら、以下のコマンドで作成してください。
 
 
-```
+```sh
 rails-api-nextjs-verification-app $ touch .gitmodules
 ```
 
-```git:.gitmodules
+```sh:.gitmodules
 [submodule "front"]  
 	path = front  
 	url = [フロントエンドリポジトリのSSH]  
@@ -103,7 +103,7 @@ rails-api-nextjs-verification-app $ touch .gitmodules
 - メインリポジトリ変更のcommitとpushを行います。
 
 
-```
+```sh
 rails-api-nextjs-verification-app $ git add .  
 rails-api-nextjs-verification-app $ git commit -m "Add: submolues"  
 rails-api-nextjs-verification-app $ git push  
@@ -274,7 +274,7 @@ gem "rails", "~> 7.0.5"
 ルートディレクトリで`docker-compose build`を実行して、Dockerイメージをビルドします。  
 このコマンドは、`docker-compose.yml`ファイルに記載された設定をもとに、Dockerイメージを作成します。
 
-```
+```sh
 rails-api-nextjs-verification-app $ docker-compose build
 ```
 
@@ -285,20 +285,20 @@ rails-api-nextjs-verification-app $ docker-compose build
 次に、フロントエンド側で使用するNext.jsアプリケーションを作成していきます。  
 まずは、`front`ディレクトリへ移動してください。
 
-```
+```sh
 $ cd front
 ```
 
 続いて、`$ docker-compose run --rm front yarn create next-app .`を実行します。
 
 
-```
+```sh
 front $ docker-compose run --rm front yarn create next-app .
 ```
 
 すると、以下のエラーが発生するかと思います。  
 
-```
+```sh
 [##] 2/2The directory app contains files that could conflict:
 
   Dockerfile
@@ -362,7 +362,7 @@ info Visit https://yarnpkg.com/en/docs/cli/create for documentation about this c
 
 まず、`back`ディレクトリに移動します。
 
-```
+```sh
 front $ cd ..
 $ cd back
 ```
@@ -436,7 +436,7 @@ default: &default
 次に、`back`ディレクトリで`$ docker-compose run --rm back rails db:create`を実行します。  
 そうすると、以下のエラーが発生します。このエラーは、必要なRubyのgemがインストールされていないことを示します。
 
-```
+```sh
 Could not find pg-1.5.4, puma-5.6.7, bootsnap-1.17.0, debug-1.8.0, msgpack-1.7.2, irb-1.9.1, reline-0.4.0, rdoc-6.6.0, psych-5.1.1.1, stringio-3.0.9 in locally installed gems
 Run `bundle install --gemfile /app/Gemfile` to install missing gems.
 ```
@@ -461,13 +461,13 @@ Run `bundle install --gemfile /app/Gemfile` to install missing gems.
 ### scaffold追加
 `back`ディレクトリで、`docker-compose run --rm back bundle exec rails g scaffold post title:string`を実行します。
 
-```
+```sh
 back $ docker-compose run --rm back bundle exec rails g scaffold post title:string
 ```
 
 次に、`docker-compose run --rm back bundle exec rails db:migrate`を実行します。
 
-```
+```sh
 back $ docker-compose run --rm back bundle exec rails db:migrate
 ```
 
@@ -525,13 +525,13 @@ end
 こうすることで、`localhost:8000`と`127.0.0.1:8000`からのAPIリクエストを許可することができます。  
 そしたら、`back`ディレクトリで`$ docker-compose run --rm back bundle install`を実行します。
 
-```
+```sh
 back $ docker-compose run --rm back bundle install
 ```
 
 そして、再ビルドします。
 
-```
+```sh
 back $ docker-compose build back
 ```
 
