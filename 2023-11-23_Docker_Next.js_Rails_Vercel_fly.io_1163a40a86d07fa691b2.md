@@ -46,7 +46,7 @@ https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 
 </details>
 
-**ディレクトリ構成**
+### ディレクトリ構成
 
 ```
 ├── rails-api-nextjs-verification-app
@@ -116,7 +116,7 @@ rails-api-nextjs-verification-app $ git push
 ## Docker設定
 次に、Dockerの設定として`docker-compose.yml`の作成と`front` `back`ディレクトリに`Dockerfile`を作成していきます。
 
-**ディレクト構成**
+### ディレクト構成
 
 ```
 ├── rails-api-nextjs-verification-app
@@ -128,7 +128,7 @@ rails-api-nextjs-verification-app $ git push
 ```
 
 
-**docker-compose.yml**
+#### docker-compose.yml
 
 ```:docker-compose.yml
 version: "3"
@@ -192,7 +192,7 @@ volumes:
     - yarn dev -p 4000 → コンテナ起動時に、ポート4000でフロントの開発サーバーを起動します。
 </details>
 
-**/front/Dockerfile**
+#### /front/Dockerfile
 
 `front`ディレクトリに`Dockerfile`を作成します。  
 `Dockerfile`はイメージの設計図として機能します。必要な依存関係のインストールや、アプリケーションのコードのコピーなど、イメージを構築するために必要な情報を記載しています。
@@ -202,7 +202,7 @@ FROM node:19.4.0
 WORKDIR /app
 ```
 
-**/back/Dockerfile**
+#### /back/Dockerfile
 
 `back`ディレクトリに`Dockerfile`と`entrypoint.sh`を作成します。  
 `entrypoint.sh`は、コンテナが開始された時に実行されるスクリプトになります。
@@ -256,7 +256,7 @@ ruby "3.2.2"
 gem "rails", "~> 7.0.5"
 ```
 
-**現在のディレクトリ構造**
+#### 現在のディレクトリ構造
 
 ```
 ├── rails-api-nextjs-verification-app
@@ -271,6 +271,12 @@ gem "rails", "~> 7.0.5"
     ├── docker-compose.yml 
 ```
 
+ルートディレクトリで`docker-compose build`を実行して、Dockerイメージをビルドします。  
+このコマンドは、`docker-compose.yml`ファイルに記載された設定をもとに、Dockerイメージを作成します。
+
+```
+rails-api-nextjs-verification-app $ docker-compose build
+```
 
 ### 参考情報
 
