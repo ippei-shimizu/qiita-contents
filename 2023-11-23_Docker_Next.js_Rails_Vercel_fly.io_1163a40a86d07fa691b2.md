@@ -59,49 +59,55 @@ https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 ```
 $ mkdir rails-api-nextjs-verification-app
 ```
+
 - `$ cd rails-api-nextjs-verification-app`で移動します。
 - github上で、`rails-api-nextjs-verification-app`用のリポジトリを作成して、`git init`をします。  
 
 
 ```
-rails-api-nextjs-verification-app $ git init 
-rails-api-nextjs-verification-app $ git add README.mb
-rails-api-nextjs-verification-app $ git commit -m "first commit"
-rails-api-nextjs-verification-app $ git branch -M main
-rails-api-nextjs-verification-app $  git remote add origin git@github.com:[ユーザーid]/[リポジトリ名].git
-rails-api-nextjs-verification-app $  git push -u origin main
+rails-api-nextjs-verification-app $ git init   
+rails-api-nextjs-verification-app $ git add README.mb  
+rails-api-nextjs-verification-app $ git commit -m "first commit"  
+rails-api-nextjs-verification-app $ git branch -M main  
+rails-api-nextjs-verification-app $  git remote add origin git@github.com:[ユーザーid]/[リポジトリ名].git  
+rails-api-nextjs-verification-app $  git push -u origin main  
 ```
+
 これで、リポジトリと連携ができたかと思います。
 - `front`ディレクトと`back`ディレクトリ用のリポジトリを作成します。
 - `rails-api-nextjs-verification-app`ディレクトリ内に、`front`と`back`のサブモジュールを追加します。
 
 
 ```
-rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのURL] front
-rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのURL] back
+rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのURL] front  
+rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのURL] back  
 ```
+
 - `.gitmodules`を作成します。
 
 
 ```
 rails-api-nextjs-verification-app $ touch .gitmodules
 ```
+
 ```:.gitmodules
-[submodule "front"]
-	path = front
-	url = [フロントエンドリポジトリのURL]
-[submodule "back"]
-	path = back
-	url = [バックエンドリポジトリのURL] 
+[submodule "front"]  
+	path = front  
+	url = [フロントエンドリポジトリのURL]  
+[submodule "back"]  
+	path = back  
+	url = [バックエンドリポジトリのURL]   
 ```
+
 - メインリポジトリ変更のcommitとpushを行います。
 
 
 ```
-rails-api-nextjs-verification-app $ git add .
-rails-api-nextjs-verification-app $ git commit -m "Add: submolues"
-rails-api-nextjs-verification-app $ git push
+rails-api-nextjs-verification-app $ git add .  
+rails-api-nextjs-verification-app $ git commit -m "Add: submolues"  
+rails-api-nextjs-verification-app $ git push  
 ```
+
 以下の画面のようになれば完了です。  
 
 [![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
