@@ -192,7 +192,7 @@ volumes:
     - yarn dev -p 4000 → コンテナ起動時に、ポート4000でフロントの開発サーバーを起動します。
 </details>
 
-### /front/Dockerfile
+### front/Dockerfile
 
 `front`ディレクトリに`Dockerfile`を作成します。  
 `Dockerfile`はイメージの設計図として機能します。必要な依存関係のインストールや、アプリケーションのコードのコピーなど、イメージを構築するために必要な情報を記載しています。
@@ -202,7 +202,7 @@ FROM node:19.4.0
 WORKDIR /app
 ```
 
- /back/Dockerfile
+### back/Dockerfile
 
 `back`ディレクトリに`Dockerfile`と`entrypoint.sh`を作成します。  
 `entrypoint.sh`は、コンテナが開始された時に実行されるスクリプトになります。
