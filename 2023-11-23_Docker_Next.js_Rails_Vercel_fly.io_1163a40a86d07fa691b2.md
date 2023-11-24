@@ -357,7 +357,98 @@ info Visit https://yarnpkg.com/en/docs/cli/create for documentation about this c
 
 [![Image from Gyazo](https://i.gyazo.com/d20ca07eb84effa5c60be0ee30100cab.png)](https://gyazo.com/d20ca07eb84effa5c60be0ee30100cab)
 
+## バックエンド側の環境構築（Rails API）
+フロントエンド側のアプリケーションが作成できたら、次はバックエンド側のアプリケーションをRails APIモードで作成していきます。  
 
+まず、`back`ディレクトリに移動します。
+
+```
+front $ cd ..
+$ cd back
+```
+
+`back`ディレクトリで、`$ docker-compose run --rm --no-deps back bundle exec rails new . --api --database=postgresql`を実行します。  
+これは、docker-composeを使用して、Railsアプリケーションを作成するためのコマンドです。  
+
+<details><summary>docker-compose run --rm --no-deps back bundle exec rails new . --api --database=postgresql について</summary>
+
+- docker-compose run
+  - `docker-compose.yml`ファイル内のサービスを起動するために使用されます。
+- --rm
+  - コマンドの実行が完了した後にコンテナを自動的に削除するようにします。
+- --no-deps
+  - backに依存しているデータベースも一緒に起動されないようにします。
+- back
+  - `docker-compose.yml`ファイル内で指定されたサービス名です。
+- bundle exec rails new . --api --database=postgresql
+  - 新しいRailsアプリケーションをAPI専用で作成し、データベースにはPostgreSQLを使用します。
+</details>
+
+コマンドを実行すると、`README.mb`と`Gemfile`が競合を起こしてしまうので、以下の画像のように`Y`と入力して、上書き保存をします。
+
+[![Image from Gyazo](https://i.gyazo.com/21820d060ff98de8c8b347def66b0e94.png)](https://gyazo.com/21820d060ff98de8c8b347def66b0e94)
+
+Railsアプリケーションの作成が完了すると、`back`ディレクトリ内は以下の画像のようになります。
+
+[![Image from Gyazo](https://i.gyazo.com/8d7e8990a0f01e3ecccec9321c3d838a.png)](https://gyazo.com/8d7e8990a0f01e3ecccec9321c3d838a)
+
+それでは、Railsアプリケーションを起動する前に設定を行います。
+
+#### 国際化とタイムゾーンの設定
+`config/application.rb`に以下のコードを追加します。
+
+```:config/application.rb
+module App
+  class Application < Rails::Application
+
+    config.api_only = true
+    config.time_zone = 'Tokyo'
+    config.active_record.default_timezone = :local
+    config.i18n.default_locale = :ja
+
+  end
+end
+```
+
+#### ホスト機能設定
+`config/environments/development.rb`に`config.hosts << "api"`を追加します。  
+
+```:config/environments/development.rb
+Rails.application.configure do
+
+  config.hosts << "api"
+end
+```
+
+#### データベースのセットアップ
+`/config/database.yml`に以下のコードを追加します。
+
+```:/config/database.yml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: user
+  password: password
+  host: db
+```
+
+次に、`back`ディレクトリで`$ docker-compose run --rm back rails db:create`を実行します。  
+そうすると、以下のエラーが発生します。このエラーは、必要なRubyのgemがインストールされていないことを示します。
+
+```
+Could not find pg-1.5.4, puma-5.6.7, bootsnap-1.17.0, debug-1.8.0, msgpack-1.7.2, irb-1.9.1, reline-0.4.0, rdoc-6.6.0, psych-5.1.1.1, stringio-3.0.9 in locally installed gems
+Run `bundle install --gemfile /app/Gemfile` to install missing gems.
+```
+
+なので、`$ docker-compose run --rm back bundle install`を実行し、`$ docker-compose build back`を実行します。  
+
+そしたら、再度`$ docker-compose run --rm back rails db:create`を実行します。 
+データベースのセットアップが完了したはずなので、`$ docker-compose up`を実行してアプリケーションを起動します。  
+
+`http://0.0.0.0:3000/`にアクセスして、Railsの初期画面が表示されたらRailsアプリケーションの作成は完了です。
+
+[![Image from Gyazo](https://i.gyazo.com/3ecb22d1dec2e9101897c20f3ca15754.png)](https://gyazo.com/3ecb22d1dec2e9101897c20f3ca15754)
 
 
 
