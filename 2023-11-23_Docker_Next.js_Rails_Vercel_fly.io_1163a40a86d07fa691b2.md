@@ -35,9 +35,9 @@ private: true
 
 https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 
-## メインリポジトリ作成、フロントエンド・バックエンドディレクトリのサブモジュール化
+## リポジトリ作成とサブモジュール化
 
-今回は、フロントエンドとバックエンドを別々のリポジトリで管理する方法で進めたいと思います。  
+今回は、フロントエンドとバックエンドを別々のリポジトリでサブモジュール化して、メインリポジトリで読み込む方法を行います。 
 
 <details><summary>submoduleについて</summary>
 
@@ -128,7 +128,7 @@ rails-api-nextjs-verification-app $ git push
 ```
 
 
-#### docker-compose.yml
+### docker-compose.yml
 
 ```:docker-compose.yml
 version: "3"
@@ -192,7 +192,7 @@ volumes:
     - yarn dev -p 4000 → コンテナ起動時に、ポート4000でフロントの開発サーバーを起動します。
 </details>
 
-#### /front/Dockerfile
+### /front/Dockerfile
 
 `front`ディレクトリに`Dockerfile`を作成します。  
 `Dockerfile`はイメージの設計図として機能します。必要な依存関係のインストールや、アプリケーションのコードのコピーなど、イメージを構築するために必要な情報を記載しています。
@@ -202,7 +202,7 @@ FROM node:19.4.0
 WORKDIR /app
 ```
 
-#### /back/Dockerfile
+ /back/Dockerfile
 
 `back`ディレクトリに`Dockerfile`と`entrypoint.sh`を作成します。  
 `entrypoint.sh`は、コンテナが開始された時に実行されるスクリプトになります。
@@ -256,7 +256,7 @@ ruby "3.2.2"
 gem "rails", "~> 7.0.5"
 ```
 
-#### 現在のディレクトリ構造
+### 現在のディレクトリ構造
 
 ```
 ├── rails-api-nextjs-verification-app
