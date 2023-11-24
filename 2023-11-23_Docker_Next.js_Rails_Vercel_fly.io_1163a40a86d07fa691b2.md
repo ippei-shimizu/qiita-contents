@@ -47,6 +47,7 @@ https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 </details>
 
 **ディレクトリ構成**
+
 ```
 ├── rails-api-nextjs-verification-app
   ├── front
@@ -54,11 +55,14 @@ https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 ```
 
 - 任意のディレクトリで、`$ mkdir [任意のディレクトリ名]`を実行します。今回は、`rails-api-nextjs-verification-app`で進めていきます。
+
 ```
 $ mkdir rails-api-nextjs-verification-app
 ```
 - `$ cd rails-api-nextjs-verification-app`で移動します。
 - github上で、`rails-api-nextjs-verification-app`用のリポジトリを作成して、`git init`をします。  
+
+
 ```
 rails-api-nextjs-verification-app $ git init 
 rails-api-nextjs-verification-app $ git add README.mb
@@ -70,11 +74,15 @@ rails-api-nextjs-verification-app $  git push -u origin main
 これで、リポジトリと連携ができたかと思います。
 - `front`ディレクトと`back`ディレクトリ用のリポジトリを作成します。
 - `rails-api-nextjs-verification-app`ディレクトリ内に、`front`と`back`のサブモジュールを追加します。
+
+
 ```
 rails-api-nextjs-verification-app $ git submodule add [フロントエンドリポジトリのURL] front
 rails-api-nextjs-verification-app $ git submodule add [バックエンドリポジトリのURL] back
 ```
 - `.gitmodules`を作成します。
+
+
 ```
 rails-api-nextjs-verification-app $ touch .gitmodules
 ```
@@ -87,15 +95,21 @@ rails-api-nextjs-verification-app $ touch .gitmodules
 	url = [バックエンドリポジトリのURL] 
 ```
 - メインリポジトリ変更のcommitとpushを行います。
+
+
 ```
 rails-api-nextjs-verification-app $ git add .
 rails-api-nextjs-verification-app $ git commit -m "Add: submolues"
 rails-api-nextjs-verification-app $ git push
 ```
-以下の画面のようになれば完了です。
+以下の画面のようになれば完了です。  
+
 [![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
 
 
 ### 参考情報
 
+https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
+
+https://zenn.dev/taku1115/articles/6c9fa97ab37e38
 
