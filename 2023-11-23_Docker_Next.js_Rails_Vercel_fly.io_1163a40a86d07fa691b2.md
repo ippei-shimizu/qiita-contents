@@ -636,9 +636,49 @@ export default function Home() {
 
 これで、`front`ディレクトリのリポジトリの`mainブランチ`にpushされたら、自動でデプロイが行われます。
 
+## Fly.ioへデプロイ
+次に、RailsAPIアプリケーションをFly.ioにデプロイします。  
+`back`ディレクトリで`fly launch`を実行します。  
+
+Fly.ioの無料枠についてのページはこちら  
+https://fly.io/docs/about/pricing/  
+> Up to 3 shared-cpu-1x 256mb VMs
+> 3GB persistent volume storage (total)
+> 160GB outbound data transfer
+
+
+```
+back $ fly launch
+```
+
+`fly launch`を実行して、`? Do you want to tweak these settings before proceeding`に`y`と答えると、詳細を設定するページが立ち上がります。  
+今回は無料枠での運用を想定しているため、以下の設定にします。  
+- Memory & CPU
+  - VM Sizes → shared-cpu-1x
+  - VM Memory → 256MB
+- Database
+  - Configuration → Development - Single node, 1x shared CPU, 256MB RAM, 1GB disk
+
+設定が完了したら、以下のファイルが作成されているかと思います。
+
+[![Image from Gyazo](https://i.gyazo.com/a9085d19505422d88aa6914259dd4052.png)](https://gyazo.com/a9085d19505422d88aa6914259dd4052)  
+
+新規にファイルが作成されていることを確認できたら、`fly deploy`でデプロイを行います。  
+エラーなく、無事にデプロイが完了したら、ダッシュボード（https://fly.io/dashboard）を確認して、
+
+```
+back $ fly deploy
+```
+
+`fly open`でデプロイしたアプリケーションを確認することができます。  
+今回のRailsAPIアプリケーションは、`scaffold`を使用しているので、`https://[設定で指定した名前.fly.dev]/posts`にアクセスすると、JSON形式のページが表示されるかと思います。  
+
+
 ## 参考情報
 
 https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
 
-https://zenn.dev/taku1115/articles/6c9fa97ab37e38
+https://zenn.dev/taku1115/articles/6c9fa97ab37e38  
+
+https://zenn.dev/hokawa/articles/65ddcd9974448c
 
