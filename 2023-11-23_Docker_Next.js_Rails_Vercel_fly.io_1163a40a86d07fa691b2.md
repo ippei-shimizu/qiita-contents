@@ -29,7 +29,7 @@ private: true
 6. Next.jsでAPIリクエスト
 7. Vercelへデプロイ
 8. Fly.ioへデプロイ
-9.  Github Actions
+9. Github Actions
 10. CORS設定
 ### ソースコード
 
@@ -675,6 +675,52 @@ back $ fly deploy
 `fly open`でデプロイしたアプリケーションを確認することができます。  
 今回のRailsAPIアプリケーションは、`scaffold`を使用しているので、`https://[設定で指定した名前.fly.dev]/posts`にアクセスすると、JSON形式のページが表示されるかと思います。  
 
+## Github Actions
+次に、Fly.ioへのデプロイをGithub Actionsを使用して、backリポジトリの`mainブランチ`にpushされたら自動でデプロイが行われるようにしたいと思います。  
+
+公式ドキュメントはこちら  
+https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/  
+
+### トークン作成
+まず、デプロイの設定に必要なトークンを作成します。`flyctl tokens create deploy`でトークンを作成します。  
+
+```
+back $ flyctl tokens create deploy
+```
+
+### GitHubにトークン設定
+次に、作成したトークンをGitHubに設定します。  
+`back`用のリポジトリページを開いて、`Settings`→`Secrets and variables`→`Actions`を選択します。  
+
+次に、`New repository secret`を選択します。  
+
+そしたら、`Name`に`FLY_API_TOKEN`と入力し、`Secret`に先ほど作成したトークンを入力して、`Add Secret`をクリックします。
+
+### ワークフロー作成
+トークン設定が完了したら、次はGithub Actionsのワークフローを作成します。  
+
+`back`ディレクトリ直下に、`.github/workflows/fly.yml`を作成します。  
+
+```yml:fly.yml
+name: Fly Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+```
+
+`branches`に`main`と設定することで、`back`リポジトリの`mainブランチ`にpushされた時に、GithubActionsにより自動でFly.ioへのデプロイが実行されます。
+
 
 ## 参考情報
 
@@ -682,5 +728,7 @@ https://blog.furu07yu.com/entry/rails-nextjs-monorepo-docker-setup
 
 https://zenn.dev/taku1115/articles/6c9fa97ab37e38  
 
-https://zenn.dev/hokawa/articles/65ddcd9974448c
+https://zenn.dev/hokawa/articles/65ddcd9974448c  
+
+https://zenn.dev/hokawa/articles/956910030b56f2
 
