@@ -682,11 +682,12 @@ back $ fly deploy
 https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/  
 
 ### トークン作成
-まず、デプロイの設定に必要なトークンを作成します。`flyctl tokens create deploy`でトークンを作成します。  
-
-```
-back $ flyctl tokens create deploy
-```
+まず、デプロイの設定に必要なトークンを作成します。  
+fly.ioのダッシュボードにログインして、`Account`の`Access Tokens`をクリックします。  
+[![Image from Gyazo](https://i.gyazo.com/e489141d60e0985af3eda784d6cbebdc.png)](https://gyazo.com/e489141d60e0985af3eda784d6cbebdc)  
+`Create token`にトークン名を入力して、`Create`をクリックします。  
+[![Image from Gyazo](https://i.gyazo.com/52bb02a7ed2e463eb88a0ea821c57075.png)](https://gyazo.com/52bb02a7ed2e463eb88a0ea821c57075)  
+作成されたトークンは、Githubに登録するので、コピーをして控えておきます。
 
 ### GitHubにトークン設定
 次に、作成したトークンをGitHubに設定します。  
