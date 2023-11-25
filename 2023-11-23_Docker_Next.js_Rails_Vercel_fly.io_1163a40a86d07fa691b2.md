@@ -722,6 +722,23 @@ jobs:
 
 `branches`に`main`と設定することで、`back`リポジトリの`mainブランチ`にpushされた時に、GithubActionsにより自動でFly.ioへのデプロイが実行されます。
 
+実際に、`back`ディレクトリに少し修正を加えてみて、`mainブランチ`にpushしてみます。  
+`back`ディレクトリ用のリモートリポジトリの`Actions`を確認して、デプロイが成功することを確認してみましょう。  
+以下の画像のように、緑色のチェックマークになればGithub Actionsによるデプロイは成功です。  
+[![Image from Gyazo](https://i.gyazo.com/bc2e4ea8fbf705cd67830ebe5436fdf1.png)](https://gyazo.com/bc2e4ea8fbf705cd67830ebe5436fdf1)  
+
+以下は、私がGithub Actionsでのデプロイ時に発生したエラーになります。もし、エラーが発生した時に参考になれば幸いです。  
+<details><summary>デプロイ時に発生したエラー</summary>
+
+:::note warn
+
+マシンの上限に達している  
+```
+Error: failed to update VM 4d891224b70168: You have reached the maximum number of machines for this app.
+```
+アプリケーションに割り当てられているマシンの最大数が無料枠で使用できる数に達していると発生するエラーになります。
+:::
+</details>
 
 ## 参考情報
 
