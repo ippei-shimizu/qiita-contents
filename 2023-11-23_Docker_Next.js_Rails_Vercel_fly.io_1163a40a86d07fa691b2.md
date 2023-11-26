@@ -35,7 +35,7 @@ private: true
 
 https://github.com/ippei-shimizu/rails-api-nextjs-verification-app
 
-## リポジトリ作成とサブモジュール化
+## 1.リポジトリ作成とサブモジュール化
 
 今回は、フロントエンドとバックエンドを別々のリポジトリでサブモジュール化して、メインリポジトリで読み込む方法を行います。 
 
@@ -66,7 +66,7 @@ $ mkdir rails-api-nextjs-verification-app
 
 ```sh
 rails-api-nextjs-verification-app $ git init   
-rails-api-nextjs-verification-app $ git add README.mb  
+rails-api-nextjs-verification-app $ git add README.md  
 rails-api-nextjs-verification-app $ git commit -m "first commit"  
 rails-api-nextjs-verification-app $ git branch -M main  
 rails-api-nextjs-verification-app $  git remote add origin git@github.com:[ユーザーid]/[リポジトリ名].git  
@@ -113,7 +113,7 @@ rails-api-nextjs-verification-app $ git push
 
 [![Image from Gyazo](https://i.gyazo.com/a22f0379af73572ca5512fe548b23c6f.png)](https://gyazo.com/a22f0379af73572ca5512fe548b23c6f)
 
-## Docker設定
+## 2.Docker設定
 次に、Dockerの設定として`docker-compose.yml`の作成と`front` `back`ディレクトリに`Dockerfile`を作成していきます。
 
 ### ディレクト構成
@@ -262,12 +262,12 @@ gem "rails", "~> 7.0.5"
 ├── rails-api-nextjs-verification-app
     ├── front/
         ├── Dockerfile
-        ├── README.mb
+        ├── README.md
     └── back/
         ├── Dockerfile
         ├── Gemfile
         ├── Gemfile.lock
-        ├── README.mb
+        ├── README.md
     ├── docker-compose.yml 
 ```
 
@@ -281,7 +281,7 @@ rails-api-nextjs-verification-app $ docker-compose build
 これで、`docker-compose build`が成功すれば、DockerにImageが作成されていると思います。  
 `docker images`を実行して、Imageが作成されているか確認してみてください。
 
-## フロントエンド側の環境構築（Next.js）
+## 3. フロントエンド側の環境構築（Next.js）
 次に、フロントエンド側で使用するNext.jsアプリケーションを作成していきます。  
 まずは、`front`ディレクトリへ移動してください。
 
@@ -331,7 +331,7 @@ info Visit https://yarnpkg.com/en/docs/cli/create for documentation about this c
         ├── Dockerfile
         ├── Gemfile
         ├── Gemfile.lock
-        ├── README.mb
+        ├── README.md
     ├── docker-compose.yml 
     ├── Dockerfile  // ここに移動
 ```
@@ -357,7 +357,7 @@ info Visit https://yarnpkg.com/en/docs/cli/create for documentation about this c
 
 [![Image from Gyazo](https://i.gyazo.com/d20ca07eb84effa5c60be0ee30100cab.png)](https://gyazo.com/d20ca07eb84effa5c60be0ee30100cab)
 
-## バックエンド側の環境構築（Rails API）
+## 4. バックエンド側の環境構築（Rails API）
 フロントエンド側のアプリケーションが作成できたら、次はバックエンド側のアプリケーションをRails APIモードで作成していきます。  
 
 まず、`back`ディレクトリに移動します。
@@ -384,7 +384,7 @@ $ cd back
   - 新しいRailsアプリケーションをAPI専用で作成し、データベースにはPostgreSQLを使用します。
 </details>
 
-コマンドを実行すると、`README.mb`と`Gemfile`が競合を起こしてしまうので、以下の画像のように`Y`と入力して、上書き保存をします。
+コマンドを実行すると、`README.md`と`Gemfile`が競合を起こしてしまうので、以下の画像のように`Y`と入力して、上書き保存をします。
 
 [![Image from Gyazo](https://i.gyazo.com/21820d060ff98de8c8b347def66b0e94.png)](https://gyazo.com/21820d060ff98de8c8b347def66b0e94)
 
@@ -454,7 +454,7 @@ Run `bundle install --gemfile /app/Gemfile` to install missing gems.
 ここまでが、DockerでRailsAPIとNext.jsの環境構築が完了になります。  
 この後は、実際にRailsで簡単なAPIを作成してみて、Next.jsで非同期処理を行いたいと思います。  
 
-## API作成
+## 5. API作成
 次に、Railsアプリケーションで`scaffold`を使用して、簡単なAPIを作成してみたいと思います。  
 また、Next.js側で作成したAPIと簡単なやり取りができるところまで実装してみます。  
 
@@ -535,7 +535,7 @@ back $ docker-compose run --rm back bundle install
 back $ docker-compose build back
 ```
 
-## Next.jsでAPIリクエスト
+## 6. Next.jsでAPIリクエスト
 次に、Next.js側で「記事のタイトルのみ投稿するフォーム」と「記事一覧を取得」する実装を行ってみたいと思います。  
 以下がTypeScriptを使用したコードになります。（不要なcssは削除しました）  
 
@@ -621,7 +621,7 @@ export default function Home() {
 
 [![Image from Gyazo](https://i.gyazo.com/dee2f5b7df19fbd29e5f12a702adb80b.png)](https://gyazo.com/dee2f5b7df19fbd29e5f12a702adb80b)
 
-## Vercelへデプロイ
+## 7. Vercelへデプロイ
 先ほど作成した、`front`ディレクトリのNext.jsアプリケーションをVercelへデプロイします。  
 すごく簡単にデプロイを行うことができます。
 
@@ -636,7 +636,7 @@ export default function Home() {
 
 これで、`front`ディレクトリのリポジトリの`mainブランチ`にpushされたら、自動でデプロイが行われます。
 
-## Fly.ioへデプロイ
+## 8. Fly.ioへデプロイ
 次に、RailsAPIアプリケーションをFly.ioにデプロイします。  
 `back`ディレクトリで`fly launch`を実行します。  
 
@@ -675,7 +675,7 @@ back $ fly deploy
 `fly open`でデプロイしたアプリケーションを確認することができます。  
 今回のRailsAPIアプリケーションは、`scaffold`を使用しているので、`https://[設定で指定した名前.fly.dev]/posts`にアクセスすると、JSON形式のページが表示されるかと思います。  
 
-## Github Actions
+## 9. Github Actions
 次に、Fly.ioへのデプロイをGithub Actionsを使用して、backリポジトリの`mainブランチ`にpushされたら自動でデプロイが行われるようにしたいと思います。  
 
 公式ドキュメントはこちら  
@@ -739,6 +739,21 @@ Error: failed to update VM 4d891224b70168: You have reached the maximum number o
 アプリケーションに割り当てられているマシンの最大数が無料枠で使用できる数に達していると発生するエラーになります。
 :::
 </details>
+
+## 10. CORS設定
+最後に、`back`ディレクトリの`config/initializers/cors.rb`の`origins`にフロントエンドのURL（先ほどVercelにデプロイした際に生成されたURL）を追加することで、デプロイ環境でのCORSエラーを回避することができます。  
+
+```ruby:config/initializers/cors.rb
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins 'localhost:8000', '127.0.0.1:8000', '[フロントエンドをデプロイしたURL]'
+
+    resource "*",
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+  end
+end
+```
 
 ## 参考情報
 
