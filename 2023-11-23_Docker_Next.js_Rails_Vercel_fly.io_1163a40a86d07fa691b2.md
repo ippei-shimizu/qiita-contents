@@ -1,5 +1,5 @@
 <!--
-title:   DockerでRailsAPIモード/Next.jsの環境構築をして、Fly.ioとVercelへデプロイしてみる
+title:   DockerでRailsAPIモード/Next.jsの環境構築をして、Fly.ioとVercelへデプロイしてみた
 tags:    Docker,Next.js,Rails,Vercel,fly.io
 id:      1163a40a86d07fa691b2
 private: true
