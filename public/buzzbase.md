@@ -52,7 +52,7 @@ Email : buzzbase.app+3@gmail.com
 Password : password    
 
 ### 自己紹介
-現在は、コーダーとしてWordPressをカスタマイズ・Webサービスのコーディング業務に携わっています。
+現在は、コーダーとしてWordPressをカスタマイズ・Webサービスのコーディング業務に携わりながら、プログラミングスクールRUNTEQでWeb開発の学習に取り組んでいます。
 
 ![image_(2024_0325_2352).png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1033689/0d268ea8-b0da-201c-3cc3-51e4c2185248.png)
 
