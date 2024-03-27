@@ -60,7 +60,7 @@ Password : password
 ## サービス概要
 野球を現役でプレイしている方や指導を行っている方に向けて作成しました。  
 
-**「個人成績記録機能」** を使用して、試合のスコアや対戦相手などの **試合結果**・打席や打点数などの **打撃結果**・投球数や失点数などの **投手結果** を1試合ごとに記録することができ、 **打率や防御率などの統計成績を自動で計算** して管理することができます。
+**「個人成績記録機能」** を使用して、試合のスコアや対戦相手などの **試合結果**・打席や打点数などの **打撃結果**・投球数や失点数などの **投手結果** を1試合ごとに記録することができ、 **打率や防御率などの成績を自動で計算** して管理することができます。
 
 **「グループ機能」** では、ユーザー同士で所属チーム関係なくグループを作成することができ、グループ内のユーザー同士の「打率」や「防御率」などの **個人成績をランキング形式で共有・比較** することができます。
 
@@ -132,7 +132,7 @@ Password : password
 | メールアドレス認証 | リアルタイムバリデーション | マイページ |
 | :--- | :--- | :--- |
 | <img src="https://i.gyazo.com/fbdbdc65350675f713460b88718cc7f4.gif"> | <img src="https://i.gyazo.com/9c7e6c199fd75b5b39869da825e001ff.gif"> | <img src="https://i.gyazo.com/076dd7646bb4ad712302ef0c7a2f9258.gif"> | 
-| 新規会員登録には「メールアドレス認証」を採用しました。これにより不正なアカウントを作成することなどを防ぎ、セキュリティ面の向上を図りました | リアルタイムバリデーションを導入することで、フォームを送信する前に入力ミスをユーザーに伝えることができ、UXの向上を図りました。 | マイページで「ポジション」「所属チーム」「受賞タイトル」「統計成績」「試合結果」などの情報を確認することができます。|
+| 新規会員登録には「メールアドレス認証」を採用しました。これにより不正なアカウントを作成することなどを防ぎ、セキュリティ面の向上を図りました | リアルタイムバリデーションを導入することで、フォームを送信する前に入力ミスをユーザーに伝えることができ、UXの向上を図りました。 | マイページで「ポジション」「所属チーム」「受賞タイトル」「個人成績」「試合結果」などの情報を確認することができます。|
 
 ### ユーザー検索機能
 
@@ -227,10 +227,10 @@ Ruby on Rails を使用することで **開発速度を大幅に加速できる
 
 こだわった実装は以下の機能になります。
 
-- ユーザー認証機能
-- 成績記録の機能
-- 統計成績の自動計算機能
-- 試合成績一覧のフィルタリング機能
+- **ユーザー認証機能**
+- **成績記録の機能**
+- **成績の自動計算機能**
+- **試合成績一覧のフィルタリング機能**
 
 ### ユーザー認証機能
 
@@ -298,6 +298,97 @@ export default function SignUp() {
 - `useMemo` を使用して、`email` の値が更新されるたびに、メールアドレスが空ではないかと `validateEmail` 関数に定義されている正規表現を満たしているかを確認します。そして、`isInvalid` は、`email` が空でないかつ、`validateEmail` 関数によるバリデーションに通過しない場合に `true` を返します。
 - `isInvalid` が `true` の場合のみ、「有効なメールアドレスを入力してください」というエラーメッセージを表示します。
 
+### 成績記録の機能
+**成績を記録する機能** は、1試合ごとに「試合結果」「打撃結果」「投手結果」を記録することができる機能になります。こちらは、入力する項目数が多くなってしまうため、それぞれの記録画面を **1画面ごとに分けて** 、ステップ入力のような形式で入力できるように実装し、 **ユーザービリティを向上** を図りました。
+
+1画面ごとに記録画面を分けるためには、それぞれの入力画面で同じ試合データに対してデータの保存・編集が行えるようにする必要があります。そのため、新規試合データ作成時にローカルストレージに `game_id` を保存して、各画面ではローカルストレージの `game_id` をもとにデータの操作を行うように実装しました。
+
+また、全ての項目入力が終了したら、「入力情報まとめ画面」で入力した成績を確認できるように実装しました。
+
+![game_results.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1033689/0cb4a603-717c-ec10-62e7-e3b78e37b006.png)
+
+### 成績の自動計算機能
+こちらは、**打率や防御率などの個人成績を自動で計算する機能** になります。自動で計算することで、ユーザー自ら個人成績を計算する手間を省くことができます。
+計算して出力する成績は以下の画像の通りになります。
+
+| 打撃成績 | 投手成績 | 
+| :---: | :---: |
+| [![Image from Gyazo](https://i.gyazo.com/af0b6ae8990712c7dce340c4b096cb7a.png)](https://gyazo.com/af0b6ae8990712c7dce340c4b096cb7a) | [![Image from Gyazo](https://i.gyazo.com/e9dd7fe64c6a590ee99f66328b3ca6ee.png)](https://gyazo.com/e9dd7fe64c6a590ee99f66328b3ca6ee) |
+
+※成績の算出方法については[こちらのページ](https://buzzbase.jp/calculation-of-grades)をご覧ください。
+
+成績の計算ロジックは、Rails のモデルに実装し、ファットコントローラーにならないようにしました。
+
+**打撃成績の計算ロジック**
+```rb:/app/models/batting_average.rb
+class BattingAverage < ApplicationRecord
+
+  ZERO = 0
+
+  def self.aggregate_for_user(user_id)
+    aggregate_query.where(user_id:).group(:user_id)
+  end
+  
+    def self.aggregate_query
+    select('user_id',
+           'COUNT(game_result_id) AS number_of_matches',  # 試合数
+           'SUM(times_at_bat) AS times_at_bat',           # 打席数
+           'SUM(at_bats) AS at_bats',                     # 打数
+           'SUM(hit) AS hit',                             # 安打数
+           'SUM(two_base_hit) AS two_base_hit',           # 2塁打数
+           # 以下その他成績の合計数を計算
+           .
+           .
+           .
+           .
+      .group('user_id')
+  end
+
+  def self.stats_for_user(user_id)
+    result = unscoped.where(user_id:).select(
+      'SUM(hit + two_base_hit + three_base_hit + home_run) AS total_hits',
+      'SUM(hit) AS hit',
+      'SUM(two_base_hit) AS two_base_hit',
+      'SUM(three_base_hit) AS three_base_hit',
+      'SUM(home_run) AS home_run',
+      'SUM(at_bats) AS at_bats',
+      'SUM(hit_by_pitch + base_on_balls) AS on_base',
+      'SUM(sacrifice_hit) AS sacrifice_hits',
+      'SUM(sacrifice_fly) AS sacrifice_fly',
+      'SUM(strike_out) AS strike_outs',
+      'SUM(base_on_balls) AS base_on_balls',
+      'SUM(hit_by_pitch) AS hit_by_pitch'
+    ).reorder(nil).take
+
+    return nil unless result
+
+    stats = result.attributes
+    {
+      user_id:,
+      total_hits: stats['total_hits'].to_i,
+      batting_average: stats['at_bats'].to_i.zero? ? ZERO : (stats['total_hits'].to_f / stats['at_bats'].to_i).round(3),
+      on_base_percentage: (stats['at_bats'].to_i + stats['base_on_balls'].to_i + stats['hit_by_pitch'].to_i + stats['sacrifice_fly'].to_i).zero? ? ZERO : ((stats['total_hits'].to_f + stats['base_on_balls'].to_i + stats['hit_by_pitch'].to_i).to_f / (stats['at_bats'].to_i + stats['base_on_balls'].to_i + stats['hit_by_pitch'].to_i + stats['sacrifice_fly'].to_i)).round(3),
+      slugging_percentage: calculate_slugging_percentage(stats).round(3)
+      # その他集計成績も同様に計算
+      .
+      .
+      .
+      .
+    }
+  end
+
+  def self.calculate_slugging_percentage(stats)
+    at_bats = stats['at_bats'].to_i
+    total_bases = stats['hit'].to_i + (stats['two_base_hit'].to_i * 2) + (stats['three_base_hit'].to_i * 3) + (stats['home_run'].to_i * 4)
+    at_bats.zero? ? ZERO : total_bases.to_f / at_bats
+  end
+
+end
+```
+
+`aggregate_for_user` メソッドは、`aggregate_query` メソッドを使用してDBからのデータを集計し、引数で指定された `user_id` に一致するレコードのみをフィルタリングします。そして、指定された `user_id` に対応するユーザーの集計された統計成績を返します。
+
+`stats_for_user` メソッドは、「打率（batting_average）」「出塁率（on_base_percentage）」「長打率（slugging_percentage）」などの統計成績を計算しています。`unscoped.where(user_id:).select().reorder(nil).take` というクエリチェーンを使用することで、`unscoped` によりデフォルトスコープを無効化し、モデル全体のデータに対してクエリが実行され、`reorder(nil)` で既存の並び替えをクリアにし、`take` で単一のレコードを取得することで、データベースから効率的かつ正確にユーザーの統計データを取得し、計算することができます。
 
 ## 作成期間
 **アイデア出し・企画** → **必要な機能の洗い出し** → **画面設計・テーブル設計** → **issue作成** → **実装** → **MVPリリース** → **本リリース** という流れで作成しました。
