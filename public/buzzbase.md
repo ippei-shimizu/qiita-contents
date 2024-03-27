@@ -68,13 +68,13 @@ Password : password
 
 ## 機能一覧
 以下の機能を実装しました。
-- 個人成績記録機能
-- グループ作成機能
-- 個人成績ランキング機能
-- 野球ノート機能
-- ユーザー機能
-- ユーザー検索機能
-- 通知機能
+- **個人成績記録機能**
+- **グループ作成機能**
+- **個人成績ランキング機能**
+- **野球ノート機能**
+- **ユーザー機能**
+- **ユーザー検索機能**
+- **通知機能**
 
 ### 個人成績記録機能
 ![record.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1033689/97fc32c5-20ff-b5ad-d28e-9c786a4dec22.png)
@@ -390,12 +390,156 @@ end
 
 `stats_for_user` メソッドは、「打率（batting_average）」「出塁率（on_base_percentage）」「長打率（slugging_percentage）」などの統計成績を計算しています。`unscoped.where(user_id:).select().reorder(nil).take` というクエリチェーンを使用することで、`unscoped` によりデフォルトスコープを無効化し、モデル全体のデータに対してクエリが実行され、`reorder(nil)` で既存の並び替えをクリアにし、`take` で単一のレコードを取得することで、データベースから効率的かつ正確にユーザーの統計データを取得し、計算することができます。
 
+### 試合成績一覧のフィルタリング機能
+今まで記録した試合の一覧を表示する際に、**「シーズン」と「公式戦 or オープン戦」でフィルタリング** を行える機能になります。
+
+[![Image from Gyazo](https://i.gyazo.com/c8c4f6f1a3acfe947ac89396af22817f.gif)](https://gyazo.com/c8c4f6f1a3acfe947ac89396af22817f)
+
+実装方法を簡単に説明すると、フロント側のセレクトボックスでユーザーが選択した **「シーズン（year）」** と **「試合タイプ（matchType）」の値** を、`getFilterGameResultsUserId` 非同期関数でクエリパラメーターとしてバックエンドへ送信します。
+
+そして、バックエンド側で `filtered_game_associated_data_user_id` アクションでこれらのパラメーターを受け取り、`filtered_game_associated_data_user` メソッドを呼び出してデータのフィルタリングを行っています。
+
+```ts:/services/gameResultsService.ts
+export const getFilterGameResultsUserId = async (
+  userId: number,
+  year: any,
+  matchType: any
+) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/v1/game_results/filtered_game_associated_data_user_id?user_id=${userId}&year=${year}&match_type=${matchType}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+```
+
+<details>
+<summary>axiosInstance.ts</summary>
+
+```ts:/utils/axiosInstance.ts
+import axios from "axios";
+import Cookies from "js-cookie";
+
+const axiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+});
+
+axiosInstance.interceptors.request.use((config) => {
+  const accessToken = Cookies.get("access-token");
+  const client = Cookies.get("client");
+  const uid = Cookies.get("uid");
+
+  if (accessToken && client && uid) {
+    config.headers["access-token"] = accessToken;
+    config.headers["client"] = client;
+    config.headers["uid"] = uid;
+  }
+
+  return config;
+});
+
+export default axiosInstance;
+```
+</details>
+
+↑ 非同期関数の `getFilterGameResultsUserId` を使用して、 `user_id` `year` `matchType` をパラメーターに含み、GETリクエストを行います。
+
+```rb:/app/controllers/api/v1/game_results_controller.rb
+module Api
+  module V1
+    class GameResultsController < ApplicationController
+
+      def filtered_game_associated_data_user_id
+        year = params[:year]
+        match_type = convert_match_type(params[:match_type])
+        user_id = params[:user_id]
+        game_results = GameResult.filtered_game_associated_data_user(user_id, year, match_type)
+        render json: game_results
+      end
+
+      private
+
+      def convert_match_type(match_type)
+        case match_type
+        when '公式戦'
+          'regular'
+        when 'オープン戦'
+          'open'
+        else
+          match_type
+        end
+      end
+
+    end
+  end
+end
+```
+
+↑ 次に、`GameResultsController` の `filtered_game_associated_data_user_id` アクションでクライアントから送信されたリクエストから、`user_id` `year` `matchType` を取得して、`filtered_game_associated_data_user` メソッドに渡し、試合データのフィルタリングを行います。
+
+```rb:/app/models/game_result.rb
+class GameResult < ApplicationRecord
+
+  def self.filtered_game_associated_data_user(user, year, match_type)
+    game_results = base_query(user)
+    game_results = filter_by_year(game_results, year) if year_filter_applicable?(year)
+    game_results = filter_by_match_type(game_results, match_type) if match_type_filter_applicable?(match_type)
+
+    map_game_results(game_results)
+  end
+
+  def self.base_query(user)
+    includes(:match_result, :batting_average, :pitching_result).where(user:)
+                                                               .where.not(match_result_id: nil)
+  end
+
+  def self.filter_by_year(game_results, year)
+    start_date = Date.new(year.to_i, 1, 1)
+    end_date = Date.new(year.to_i, 12, 31)
+    game_results.where(match_results: { date_and_time: start_date..end_date })
+  end
+
+  def self.match_type_filter_applicable?(match_type)
+    match_type.present? && match_type != '全て'
+  end
+
+  def self.filter_by_match_type(game_results, match_type)
+    game_results.where(match_results: { match_type: })
+  end
+
+  def self.map_game_results(game_results)
+    game_results.map do |game_result|
+      {
+        game_result_id: game_result.id,
+        match_result: game_result.match_result,
+        batting_average: game_result.batting_average,
+        pitching_result: game_result.pitching_result
+      }
+    end
+  end
+
+end
+```
+
+↑ 試合データ一覧のフィルタリング処理は `filtered_game_associated_data_user` で実装しています。このメソッドは、以下のステップで処理が行われます。
+1. まず、`base_query` メソッドを使用して、 `match_result` `batting_average` `pitching_result` をあらかじめ結合しておきます。
+2. 次は、`filter_by_year` メソッドを使用して、ユーザーが選択したシーズン（year）が「通算」以外だった場合に、年でのフィルタリングが行われます。
+3. 次に、`filter_by_match_type` メソッドを使用して、ユーザーが選択した試合タイプ（match_type）が「全て」以外だった場合に、試合タイプでのフィルタリングが行われます。
+4. 最後に、フィルタリングされたデータがセットされた `game_results` を、ハッシュの配列にマッピングします。
+この処理を行うことで、試合データ一覧を **「シーズン（year）」** と **「試合タイプ（matchType）」** でフィルタリングして、表示させることができます。
+
 ## 作成期間
 **アイデア出し・企画** → **必要な機能の洗い出し** → **画面設計・テーブル設計** → **issue作成** → **実装** → **MVPリリース** → **本リリース** という流れで作成しました。
 （現在記事を執筆しているタイミングでは、MVPリリースまで完了しています。）
 
 全体的には、MVPリリースまでに約3ヶ月半ほどかかってしまいました。
 原因としては、本業をフルタイムで働きながら作成したということもありますが、ユーザー認証機能や成績記録機能などの実装が、作業見積もり時間よりも大幅に遅れてしまったのが大きな要因だと思います。
+
+作業時間見積もり力は今後の課題です。
 
 ## 運用して気づいた課題
 
