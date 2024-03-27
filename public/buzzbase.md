@@ -234,9 +234,9 @@ Ruby on Rails を使用することで **開発速度を大幅に加速できる
 
 ### ユーザー認証機能
 
-ユーザー認証機能には、メール認証により **不正なアカウント作成を抑制** してセキュリティ面の強化をしたことと、**入力フォームにリアルタイムバリデーション** を設定することで、ユーザービリティ向上を図りました。
+ユーザー認証機能には、**メール認証により不正なアカウント作成を抑制** してセキュリティ面の強化をしたことと、**入力フォームにリアルタイムバリデーション** を設定することで、ユーザービリティ向上を図りました。
 
-メール認証機能は、Railsの `devise` と `devise token auth` を使用し実装しました。以下の図がメール認証の流れになります。
+**メール認証機能** は、Railsの `devise` と `devise token auth` を使用し実装しました。以下の図がメール認証の流れになります。
 
 ![devise_toke_auth.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/1033689/87be19d2-ee99-ecea-8dda-c4e9e36f801a.png)
 
@@ -244,12 +244,59 @@ Ruby on Rails を使用することで **開発速度を大幅に加速できる
 1. **ユーザーの新規登録** → 新規登録フォームに「メールアドレス」「パスワード」を入力し、サーバー側に送信します。
 2. **アカウント情報の保存とメール送信** → フロント側から送信されたデータをDBに保存し、ユーザーに対してSMTPを介して、トークンを含めたリンクが記載された確認メールを送信します。
 3. **メール内リンクをクリック** → メール内に記載されているリンクをクリックすると、メールアドレス確認処理が実装されている `EmailConfirmationコンポーネント` へアクセスし、サーバー側にアカウント確認が完了したことを通知します。
-4. **メールアドレス確認をDBに記録** 
+4. **メールアドレス確認情報をDBに記録** 
 5. **ログインページに遷移** → アカウント確認が完了しているため、ログインができるようになります。
 
 のような流れになります。
 
 メール内リンクをクリック後にフロントエンド側でアクセスを受ける必要があることに気づかずに、本番環境での実装に苦労しました。
+
+次に、**フォーム入力時のリアルタイムバリデーション** についてです。
+
+[![Image from Gyazo](https://i.gyazo.com/dca1f31524092821efd8fa325e601c80.gif)](https://gyazo.com/dca1f31524092821efd8fa325e601c80)
+
+このように、ユーザーの入力に合わせてバリデーションを満たしているかの判定を行います。
+「メールアドレス入力フォーム」で実装内容を簡単に解説します。
+```tsx
+"use client";
+export default function SignUp() {
+  const [email, setEmail] = useState("");
+
+  const validateEmail = (
+    (email: string) => email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i)
+    );
+
+  const isInvalid = useMemo(() => {
+    if (email === "") return false;
+    return validateEmail(email) ? false : true;
+  }, [email, validateEmail]);
+
+  return (
+    <>
+        <EmailInput
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="caret-zinc-400 bg-main rounded-2xl"
+          type="email"
+          label="メールアドレス"
+          placeholder="buzzbase@example.com"
+          labelPlacement="outside"
+          isInvalid={isInvalid}
+          color={isInvalid ? "danger" : "default"}
+          errorMessage={
+            isInvalid ? "有効なメールアドレスを入力してください" : ""
+          }
+          variant={"bordered"}
+        />
+    </>
+  );
+}
+```
+
+- `useState`を使用して `email` を定義して、`EmailInputコンポーネント` への入力値を`setEmail` 関数を介して、`email` ステートを更新します。
+- `validateEmail` 関数は、入力されたメールアドレスの形式が正しいかを、正規表現を用いて確認します。
+- `useMemo` を使用して、`email` の値が更新されるたびに、メールアドレスが空ではないかと `validateEmail` 関数に定義されている正規表現を満たしているかを確認します。そして、`isInvalid` は、`email` が空でないかつ、`validateEmail` 関数によるバリデーションに通過しない場合に `true` を返します。
+- `isInvalid` が `true` の場合のみ、「有効なメールアドレスを入力してください」というエラーメッセージを表示します。
 
 
 ## 作成期間
