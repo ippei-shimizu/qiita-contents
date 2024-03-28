@@ -227,10 +227,70 @@ Ruby on Rails を使用することで **開発速度を大幅に加速できる
 
 こだわった実装は以下の機能になります。
 
+- **UI / UX**
 - **ユーザー認証機能**
 - **成績記録の機能**
 - **成績の自動計算機能**
 - **試合成績一覧のフィルタリング機能**
+
+### UI / UX
+UI / UX については、開発コストをできるだけ抑えて、ユーザーにストレスのない操作感を提供することを考えて、実装を行いました。
+
+開発コストを抑えるという点では、UIコンポーネントライブラリの `NextUI` と CSSフレームワークの `TailwindCSS` を使用することで、UI構築にかける時間を大幅に削減することができました。
+`NextUI` のコンポーネントは、activeやfocusやモーダルなどのアニメーションなどがとても滑らかで、こういったアニメーションを1からCSSとJavaScriptで実装すると、意外と時間がかかってしまうので、そういった点でも開発コストを抑えてUIを構築することができました。
+
+https://nextui.org/
+
+データの取得には `SWR` を使用することで、データのキャッシュと再検証により2回目以降のアクセス時にまずキャッシュからデータを返すので、レスポンス速度を向上させてユーザーにストレスのない操作感を提供しようと考えました。
+
+さらに、`stale-while-revalidate` によりバックグラウンドでデータを最新の状態に更新するため、ほぼリアルタイムのデータを表示させることができます。
+
+また、データ取得時のエラー処理とローディング状態を簡単に扱えるので、データを取得中にローディング中のUIなどを表示することで、ユーザビリティを向上させました。
+
+```ts:swrFetcher.ts
+import axiosInstance from "@app/utils/axiosInstance";
+export const fetcher = (url: string) =>
+  axiosInstance.get(url).then((res) => res.data);
+```
+
+```ts:getBaseballNotes.ts
+import { fetcher } from "@app/hooks/swrFetcher";
+import useSWR from "swr";
+
+export default function getBaseballNotes() {
+  const { data, error } = useSWR("/api/v1/baseball_notes", fetcher);
+  return {
+    notes: data,
+    isLoading: !error && !data,
+    isError: error,
+  };
+}
+```
+`fetcher` 関数を使用して、**「取得データ」** **「ローディング状態」** **「エラー状態」** を管理しています。これらの状態は、コンポーネントで直接使用することができます。
+
+```ts:NoteListComponent.tsx
+export default function NoteListComponent() {
+  const { notes, isLoading, isError } = getBaseballNotes();
+  if (isLoading) {
+    return (
+      <div className="flex justify-center pb-6 pt-14">
+        <Spinner color="primary" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <p className="text-sm text-zinc-400 text-center">
+        野球ノートの読み込みに失敗しました。
+      </p>
+    );
+  }
+}
+```
+先ほどの `getBaseballNotes` 関数を使用して、データ取得時のローディング状態とエラー状態に合わせたUIを表示することができます。
+
+https://swr.vercel.app/ja
+
 
 ### ユーザー認証機能
 
