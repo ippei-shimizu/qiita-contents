@@ -1,14 +1,14 @@
 ---
 title: 【個人開発】野球歴16年男が「野球の成績を記録して友達とランキング形式で共有できる」サービスを開発しました
 tags:
-  - "個人開発"
-  - "Rails"
-  - "Next.js"
-  - "React"
-  - "TypeScript"
-private: false
-updated_at: ""
-id: null
+  - Rails
+  - TypeScript
+  - React
+  - 個人開発
+  - Next.js
+private: true
+updated_at: '2024-03-28T23:02:58+09:00'
+id: 7c94a491587623d1d0e4
 organization_url_name: null
 slide: false
 ignorePublish: false
@@ -194,6 +194,32 @@ Password : password
 こちらでは、グループの詳細データを管理する `groupテーブル` 、グループ作成者を管理する `group_userテーブル`、グループへの招待状態と参加ユーザーを管理する `group_invitationsテーブル` を作成しています。
 
 ユーザーの招待状態を「招待中」「参加」「拒否」で管理できるように、 `group_invitationsテーブル` では `statusカラム` を用いて招待状態を管理しています。
+
+### テーブル一覧
+
+| テーブル名 | 詳細 | 
+| --- | --- |
+| users | ユーザーの基本情報を管理しています。 |
+| positions | 守備位置を管理しています。 |
+| user_positions | usersとpositionsの中間テーブルになります。 |
+| awards | ユーザーごとに大会などので受賞したタイトルを管理しています。 |
+| user_awards | usersとawardsの中間テーブルになります。 |
+| teams | チーム名を管理しています。 |
+| prefectures | チームの属している都道府県を管理しています。 |
+| baseball_categories | チームの所属連盟や年代などを管理しています。 |
+| game_results | ユーザーごとに試合データを管理しています。 |
+| match_results | 試合の詳細な結果を管理しています。 |
+| batting_averages | 試合ごとの詳細な打撃結果を管理しています。 |
+| plate_appearances | 打席ごとの結果を管理しています。 |
+| pitching_results | 試合ごとの詳細な投手結果を管理しています。 |
+| tournaments | 大会名を管理しています。 |
+| groups | グループ情報を管理しています。 |
+| group_users | グループ管理者を管理しています。 |
+| group_invitations | グループへの招待状態とメンバーを管理しています。 |
+| notifications | ユーザーへの通知情報と既読状態を管理しています。 |
+| user_notifications | usersとnotificationsの中間テーブルになります。 |
+| relationships | フォロー・フォロワー状態を管理しています。 |
+| baseball_notes | 野球ノートのデータを管理しています。 |
 
 ## 画面遷移図
 
